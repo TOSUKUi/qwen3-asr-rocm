@@ -1,0 +1,26 @@
+services:
+  qwen3-asr:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: local/qwen3-asr:rocm7.2
+    container_name: qwen3-asr
+    working_dir: /work
+    ipc: host
+    shm_size: 8g
+    devices:
+      - /dev/kfd
+      - /dev/dri
+    group_add:
+      - video
+    cap_add:
+      - SYS_PTRACE
+    security_opt:
+      - seccomp=unconfined
+    environment:
+      HF_HOME: /work/cache/huggingface
+      HUGGINGFACE_HUB_CACHE: /work/cache/huggingface
+      PYTHONUNBUFFERED: "1"
+    volumes:
+      - .:/work
+    command: ["python3", "app/transcribe_qwen.py", "--help"]
