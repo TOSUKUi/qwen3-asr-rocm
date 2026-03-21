@@ -108,6 +108,28 @@ curl -X POST http://localhost:8000/transcribe \
 docker compose stop qwen3-asr-api
 ```
 
+## OpenAI 互換 API
+
+公開仕様としては `POST /v1/audio/transcriptions` を用意しています。OpenAI SDK や既存クライアントを流用しやすい形です。
+
+モデル一覧:
+
+```bash
+curl http://localhost:8000/v1/models
+```
+
+文字起こし:
+
+```bash
+curl -X POST http://localhost:8000/v1/audio/transcriptions \
+  -H "Authorization: Bearer local-dev-token" \
+  -F "file=@samples/sample.wav" \
+  -F "model=Qwen/Qwen3-ASR-1.7B" \
+  -F "language=Japanese"
+```
+
+`response_format=text` と `response_format=verbose_json` にも対応しています。詳細は [docs/openai-compatible-api.md](/home/amemiya/work/qwen3-asr/docs/openai-compatible-api.md) を参照してください。
+
 ## トラブルシュート
 
 `torch.cuda.is_available()` が `False`
