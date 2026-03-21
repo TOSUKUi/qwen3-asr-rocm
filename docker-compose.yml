@@ -24,3 +24,28 @@ services:
     volumes:
       - .:/work
     command: ["python3", "app/transcribe_qwen.py", "--help"]
+
+  qwen3-asr-api:
+    image: local/qwen3-asr:rocm7.2
+    container_name: qwen3-asr-api
+    working_dir: /work
+    ipc: host
+    shm_size: 8g
+    devices:
+      - /dev/kfd
+      - /dev/dri
+    group_add:
+      - video
+    cap_add:
+      - SYS_PTRACE
+    security_opt:
+      - seccomp=unconfined
+    environment:
+      HF_HOME: /work/cache/huggingface
+      HUGGINGFACE_HUB_CACHE: /work/cache/huggingface
+      PYTHONUNBUFFERED: "1"
+    volumes:
+      - .:/work
+    ports:
+      - "8000:8000"
+    command: ["python3", "-m", "uvicorn", "app.server:app", "--host", "0.0.0.0", "--port", "8000"]

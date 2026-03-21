@@ -67,6 +67,47 @@ docker compose run --rm qwen3-asr \
 
 `--timestamps` を使うと `Qwen/Qwen3-ForcedAligner-0.6B` も読み込みます。
 
+## API サーバー
+
+常駐プロセスとして使う場合は API サーバーを起動します。
+
+### 1. サーバー起動
+
+```bash
+docker compose up -d qwen3-asr-api
+```
+
+### 2. ヘルスチェック
+
+```bash
+curl http://localhost:8000/health
+```
+
+### 3. 音声を投げる
+
+```bash
+curl -X POST http://localhost:8000/transcribe \
+  -F "file=@samples/sample.wav" \
+  -F "language=Japanese"
+```
+
+自動判定なら `-F "language=auto"` を使います。
+
+タイムスタンプ付き:
+
+```bash
+curl -X POST http://localhost:8000/transcribe \
+  -F "file=@samples/sample.wav" \
+  -F "language=Japanese" \
+  -F "timestamps=true"
+```
+
+停止:
+
+```bash
+docker compose stop qwen3-asr-api
+```
+
 ## トラブルシュート
 
 `torch.cuda.is_available()` が `False`
