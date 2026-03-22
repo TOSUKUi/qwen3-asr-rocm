@@ -12,6 +12,16 @@ DEFAULT_MODEL = "Qwen/Qwen3-ASR-1.7B"
 DEFAULT_ALIGNER = "Qwen/Qwen3-ForcedAligner-0.6B"
 
 
+def read_stamp_field(stamp, field: str):
+    if isinstance(stamp, dict):
+        return stamp.get(field)
+    if field == "start":
+        return getattr(stamp, "start", getattr(stamp, "start_time", None))
+    if field == "end":
+        return getattr(stamp, "end", getattr(stamp, "end_time", None))
+    return getattr(stamp, field, None)
+
+
 @app.get("/health")
 def health():
     return {
@@ -167,9 +177,9 @@ async def openai_audio_transcriptions(
                 {
                     "id": idx,
                     "seek": 0,
-                    "start": stamp.get("start"),
-                    "end": stamp.get("end"),
-                    "text": stamp.get("text"),
+                    "start": read_stamp_field(stamp, "start"),
+                    "end": read_stamp_field(stamp, "end"),
+                    "text": read_stamp_field(stamp, "text"),
                     "tokens": [],
                     "temperature": 0.0,
                     "avg_logprob": None,
