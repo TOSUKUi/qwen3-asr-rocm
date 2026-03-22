@@ -7,7 +7,7 @@
 - ハードウェア: Ryzen AI Max+ 395
 - 実行方法: Docker
 - ROCm / PyTorch ベース: `rocm/pytorch:rocm7.1_ubuntu24.04_py3.12_pytorch_release_2.8.0`
-- 音声ファイル: `samples/生涯収支マイナス５億円君の阪神大賞典&愛知杯予想.mp3`
+- 音声ファイル: `samples/benchmark_sample.mp3`
 - 音声長: `507.288 sec`
 - 言語指定: `Japanese`
 
