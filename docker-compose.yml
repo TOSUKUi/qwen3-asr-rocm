@@ -3,7 +3,9 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: local/qwen3-asr:rocm7.2
+      args:
+        BASE_IMAGE: rocm/pytorch:rocm7.1_ubuntu24.04_py3.12_pytorch_release_2.8.0
+    image: local/qwen3-asr:rocm7.1
     container_name: qwen3-asr
     working_dir: /work
     ipc: host
@@ -23,10 +25,10 @@ services:
       PYTHONUNBUFFERED: "1"
     volumes:
       - .:/work
-    command: ["python3", "app/transcribe_qwen.py", "--help"]
+    command: ["python3", "-m", "app.transcribe_qwen", "--help"]
 
   qwen3-asr-api:
-    image: local/qwen3-asr:rocm7.2
+    image: local/qwen3-asr:rocm7.1
     container_name: qwen3-asr-api
     working_dir: /work
     ipc: host

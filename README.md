@@ -1,11 +1,11 @@
 # Qwen3-ASR-1.7B on ROCm Docker
 
-Ryzen AI Max+ 395 / ROCm 7.2 を前提に、`Qwen/Qwen3-ASR-1.7B` を Docker でまず動かすための最小構成です。最初は `transformers` バックエンドで動作確認し、vLLM は後段に回す前提です。
+Ryzen AI Max+ 395 上で `Qwen/Qwen3-ASR-1.7B` を Docker でまず動かすための最小構成です。現状は ROCm 7.2 系より、ROCm 7.1 系の AMD PyTorch イメージを既定値にした方が安定していました。最初は `transformers` バックエンドで動作確認し、vLLM は後段に回す前提です。
 
 ## 前提
 
 - Ubuntu 24.04.3
-- ROCm 7.2 がホストに導入済み
+- ROCm がホストに導入済み
 - Docker が使える
 - `/dev/kfd` と `/dev/dri` が見える
 
@@ -24,7 +24,7 @@ docker --version
 docker compose build
 ```
 
-初回ビルドでは `rocm/pytorch:rocm7.2_ubuntu24.04_py3.12_pytorch_release_2.9.1` を取得し、`qwen-asr` と `ffmpeg` を入れます。
+初回ビルドでは既定で `rocm/pytorch:rocm7.1_ubuntu24.04_py3.12_pytorch_release_2.8.0` を取得し、`qwen-asr` と `ffmpeg` を入れます。
 
 ### 2. ROCm が見えるか確認
 

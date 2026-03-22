@@ -1,4 +1,5 @@
-FROM rocm/pytorch:rocm7.2_ubuntu24.04_py3.12_pytorch_release_2.9.1
+ARG BASE_IMAGE=rocm/pytorch:rocm7.1_ubuntu24.04_py3.12_pytorch_release_2.8.0
+FROM ${BASE_IMAGE}
 
 ENV DEBIAN_FRONTEND=noninteractive \
     PIP_NO_CACHE_DIR=1 \
@@ -18,4 +19,4 @@ RUN python3 -m pip install --upgrade pip setuptools wheel && \
 
 COPY app /work/app
 
-CMD ["python3", "app/transcribe_qwen.py", "--help"]
+CMD ["python3", "-m", "app.transcribe_qwen", "--help"]
