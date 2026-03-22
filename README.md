@@ -1,6 +1,6 @@
 # Qwen3-ASR-1.7B on ROCm Docker
 
-Ryzen AI Max+ 395 上で `Qwen/Qwen3-ASR-1.7B` を Docker でまず動かすための最小構成です。現状は ROCm 7.2 系より、ROCm 7.1 系の AMD PyTorch イメージを既定値にした方が安定していました。最初は `transformers` バックエンドで動作確認し、vLLM は後段に回す前提です。
+Ryzen AI Max+ 395 上で `Qwen/Qwen3-ASR-1.7B` を Docker で動かすための最小構成です。現状は ROCm 7.2 系より、ROCm 7.1 系の AMD PyTorch イメージを既定値にした方が安定していました。
 
 ## 前提
 
@@ -44,7 +44,7 @@ docker compose run --rm qwen3-asr python3 -c 'import torch; print(torch.cuda.is_
 ```bash
 mkdir -p samples outputs
 docker compose run --rm qwen3-asr \
-  python3 app/transcribe_qwen.py samples/sample.wav | tee outputs/result.json
+  python3 -m app.transcribe_qwen samples/sample.wav | tee outputs/result.json
 ```
 
 初回推論時は Hugging Face からモデルを取得するので時間がかかります。キャッシュは `./cache/huggingface` に残ります。
@@ -55,14 +55,14 @@ docker compose run --rm qwen3-asr \
 
 ```bash
 docker compose run --rm qwen3-asr \
-  python3 app/transcribe_qwen.py samples/sample.wav --language auto
+  python3 -m app.transcribe_qwen samples/sample.wav --language auto
 ```
 
 タイムスタンプ付き:
 
 ```bash
 docker compose run --rm qwen3-asr \
-  python3 app/transcribe_qwen.py samples/sample.wav --timestamps
+  python3 -m app.transcribe_qwen samples/sample.wav --timestamps
 ```
 
 `--timestamps` を使うと `Qwen/Qwen3-ForcedAligner-0.6B` も読み込みます。
