@@ -33,6 +33,7 @@ services:
     working_dir: /work
     ipc: host
     shm_size: 8g
+    restart: unless-stopped
     devices:
       - /dev/kfd
       - /dev/dri
@@ -51,3 +52,31 @@ services:
     ports:
       - "8000:8000"
     command: ["python3", "-m", "uvicorn", "app.server:app", "--host", "0.0.0.0", "--port", "8000"]
+
+  vibevoice-asr:
+    build:
+      context: .
+      dockerfile: Dockerfile.vibevoice
+      args:
+        BASE_IMAGE: rocm/pytorch:rocm7.1_ubuntu24.04_py3.12_pytorch_release_2.8.0
+    image: local/vibevoice-asr:rocm7.1
+    container_name: vibevoice-asr
+    working_dir: /work
+    ipc: host
+    shm_size: 8g
+    devices:
+      - /dev/kfd
+      - /dev/dri
+    group_add:
+      - video
+    cap_add:
+      - SYS_PTRACE
+    security_opt:
+      - seccomp=unconfined
+    environment:
+      HF_HOME: /work/cache/huggingface
+      HUGGINGFACE_HUB_CACHE: /work/cache/huggingface
+      PYTHONUNBUFFERED: "1"
+    volumes:
+      - .:/work
+    command: ["python3", "-m", "app.transcribe_vibevoice", "--help"]

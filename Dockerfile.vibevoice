@@ -1,0 +1,22 @@
+ARG BASE_IMAGE=rocm/pytorch:rocm7.1_ubuntu24.04_py3.12_pytorch_release_2.8.0
+FROM ${BASE_IMAGE}
+
+ENV DEBIAN_FRONTEND=noninteractive \
+    PIP_NO_CACHE_DIR=1 \
+    HF_HOME=/work/cache/huggingface \
+    HUGGINGFACE_HUB_CACHE=/work/cache/huggingface
+
+WORKDIR /work
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    ffmpeg \
+    git \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY requirements-vibevoice.txt /tmp/requirements-vibevoice.txt
+RUN python3 -m pip install --upgrade pip setuptools wheel && \
+    python3 -m pip install -r /tmp/requirements-vibevoice.txt
+
+COPY app /work/app
+
+CMD ["python3", "-m", "app.transcribe_vibevoice", "--help"]

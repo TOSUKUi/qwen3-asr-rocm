@@ -130,6 +130,52 @@ curl -X POST http://localhost:8000/v1/audio/transcriptions \
 
 `response_format=text` と `response_format=verbose_json` にも対応しています。詳細は [docs/openai-compatible-api.md](/home/amemiya/work/qwen3-asr/docs/openai-compatible-api.md) を参照してください。
 
+## VibeVoice ASR
+
+`transformers` 側の VibeVoice ASR は Qwen 用環境と依存がズレるので、別イメージ `vibevoice-asr` として分離しています。
+
+現状メモ:
+
+- 専用イメージのビルドは通る
+- `transformers` の `VibeVoiceAsrForConditionalGeneration` import は通る
+- この ROCm 7.1 / Ryzen AI Max+ 395 環境では、30 秒短尺は ROCm 上で完走した
+- `TORCH_ROCM_AOTRITON_ENABLE_EXPERIMENTAL=1` を付けると短尺は少し速かった
+- フル尺はモデルロードと生成開始までは到達したが、README 更新時点では完走未確認
+
+### 1. イメージをビルド
+
+```bash
+docker compose build vibevoice-asr
+```
+
+### 2. ヘルプ確認
+
+```bash
+docker compose run --rm vibevoice-asr python3 -m app.transcribe_vibevoice --help
+```
+
+### 3. 文字起こし
+
+```bash
+docker compose run --rm vibevoice-asr \
+  python3 -m app.transcribe_vibevoice samples/sample.wav
+```
+
+任意のコンテキストを与える例:
+
+```bash
+docker compose run --rm vibevoice-asr \
+  python3 -m app.transcribe_vibevoice samples/sample.wav \
+  --prompt "About horse racing"
+```
+
+短尺で `AOTriton` を有効にする例:
+
+```bash
+docker compose run --rm -e TORCH_ROCM_AOTRITON_ENABLE_EXPERIMENTAL=1 vibevoice-asr \
+  python3 -m app.transcribe_vibevoice samples/sample.wav
+```
+
 ## トラブルシュート
 
 `torch.cuda.is_available()` が `False`

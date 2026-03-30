@@ -1,0 +1,4 @@
+accelerate
+librosa
+soundfile
+git+https://github.com/huggingface/transformers.git
